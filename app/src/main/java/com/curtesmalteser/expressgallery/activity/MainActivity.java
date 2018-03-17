@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ import com.curtesmalteser.expressgallery.viewmodel.MainActivityViewModel;
 import com.facebook.stetho.Stetho;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 import butterknife.BindView;
@@ -42,11 +44,12 @@ public class MainActivity extends AppCompatActivity
     private String clientID = BuildConfig.CLIENT_ID;
     private String clientSecret = BuildConfig.CLIENT_SECRET;
     private String redirectURI = "https://com.curtesmalteser.picgallery";
+    private final String STATE_RECYCLER_VIEW = "stateRecyclerView";
 
     private Uri uri;
 
     @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+    RecyclerView mRecyclerView;
 
     @BindView(R.id.rootLayout)
     ViewGroup rootView;
@@ -54,8 +57,10 @@ public class MainActivity extends AppCompatActivity
     private ImagesAdapter listAdapter;
     private ArrayList<LocalEntry> resultList = new ArrayList<>();
 
-    AppDatabase db;
     private MainActivityViewModel mViewModel;
+
+    private Parcelable stateRecyclerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,26 +73,10 @@ public class MainActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "media.db")
-                .allowMainThreadQueries()
-                .build();
-
-
-
-
         mViewModel.getWeather().observe(this, localModel -> {
-            // TODO --->>> Update the UI
-           // if(localModel != null )bindWeatherToUI(localModel);
-            Log.d("AJDB", "size: " + localModel.size());
-            resultList = (ArrayList<LocalEntry>) localModel;
-            //listAdapter.notifyDataSetChanged();
+            if(localModel != null )bindView(localModel);
 
-            listAdapter = new ImagesAdapter(this, resultList, this);
-            recyclerView.setAdapter(listAdapter);
-
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
+             if (savedInstanceState != null) mRecyclerView.getLayoutManager().onRestoreInstanceState(stateRecyclerView);
         });
 
 
@@ -112,7 +101,7 @@ public class MainActivity extends AppCompatActivity
             call.enqueue(new Callback<TokenModel>() {
                 @Override
                 public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
-                    if (response != null)
+                    if (response.body().getAccessToken() != null)
                     savePreferences(response.body().getAccessToken());
                 }
 
@@ -126,7 +115,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListItemClick(LocalEntry datum) {
-        recyclerView.addOnItemTouchListener(new ImagesAdapter.RecyclerTouchListener(getApplicationContext(), recyclerView, new ImagesAdapter.ClickListener() {
+        mRecyclerView.addOnItemTouchListener(new ImagesAdapter.RecyclerTouchListener(getApplicationContext(), mRecyclerView, new ImagesAdapter.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Bundle bundle = new Bundle();
@@ -151,5 +140,21 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences.Editor sharedPreferences = this.getSharedPreferences("pictures_preferences", MODE_PRIVATE).edit();
         sharedPreferences.putString("token", token);
         sharedPreferences.apply();
+    }
+
+    private void bindView(List<LocalEntry> localModel) {
+        resultList = (ArrayList<LocalEntry>) localModel;
+
+        listAdapter = new ImagesAdapter(this, resultList, this);
+        mRecyclerView.setAdapter(listAdapter);
+
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        stateRecyclerView = mRecyclerView.getLayoutManager().onSaveInstanceState();
     }
 }

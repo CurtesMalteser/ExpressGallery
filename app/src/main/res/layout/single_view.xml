@@ -12,61 +12,64 @@
     card_view:cardCornerRadius="4dp"
     card_view:layout_constraintBottom_toBottomOf="parent">
 
-    <ImageView
-        android:id="@+id/picture"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        tools:background="@mipmap/ic_launcher"/>
+        <ImageView
+            android:id="@+id/picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            tools:background="@mipmap/ic_launcher" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/numberOfLikesLabel"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/likes"
+            android:background="#BB000000"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tvNumberOfLikes"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/tvNumberOfLikes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/numberOfLikesLabel"
-            app:layout_constraintEnd_toStartOf="@+id/commentsLabel"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/numberOfLikesLabel"
-            app:layout_constraintTop_toBottomOf="@+id/numberOfLikesLabel"
-            tools:text="@string/likes" />
-
-        <TextView
-            android:id="@+id/commentsLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/comments"
-            app:layout_constraintBottom_toTopOf="@+id/tvNumberOfLikes"
-            app:layout_constraintEnd_toStartOf="@+id/tvComments"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/tvNumberOfLikes"
-            app:layout_constraintTop_toBottomOf="@+id/tvNumberOfLikes" />
-
-        <TextView
-            android:id="@+id/tvComments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/comments"
-            app:layout_constraintBottom_toTopOf="@+id/commentsLabel"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/commentsLabel"
-            app:layout_constraintTop_toBottomOf="@+id/commentsLabel" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/numberOfLikesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/likes"
+                android:paddingRight="8dp"
+                app:srcCompat="@drawable/ic_heart_white"/>
+
+            <TextView
+                android:id="@+id/tvNumberOfLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:paddingRight="8dp"
+                tools:text="10" />
+
+            <ImageView
+                android:id="@+id/commentsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/comments"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                app:srcCompat="@drawable/ic_chat_box" />
+
+            <TextView
+                android:id="@+id/tvComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:text="5" />
+        </LinearLayout>
+
+
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>
