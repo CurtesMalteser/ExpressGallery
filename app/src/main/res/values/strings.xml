@@ -4,4 +4,5 @@
     <string name="auth_url" translatable="false">https://api.instagram.com/</string>
     <string name="likes">Likes:</string>
     <string name="comments">Comments:</string>
+    <string name="redirect_uri" translatable="false">https://com.curtesmalteser.picgallery</string>
 </resources>

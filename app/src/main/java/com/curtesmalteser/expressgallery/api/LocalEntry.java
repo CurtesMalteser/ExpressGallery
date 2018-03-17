@@ -10,7 +10,7 @@ import android.arch.persistence.room.PrimaryKey;
 
 
 @Entity(tableName = "local_data")
-public class LocalModel {
+public class LocalEntry {
 
     @PrimaryKey(autoGenerate = true)
     int id;
@@ -20,14 +20,14 @@ public class LocalModel {
     private int comments;
 
     @Ignore
-    public LocalModel(String url, int likes, int comments) {
+    public LocalEntry(String url, int likes, int comments) {
         this.url = url;
         this.likes = likes;
         this.comments = comments;
     }
 
     // Construtor used by ROOM
-    public LocalModel(int id, String url, int likes, int comments) {
+    public LocalEntry(int id, String url, int likes, int comments) {
         this.id = id;
         this.url = url;
         this.likes = likes;

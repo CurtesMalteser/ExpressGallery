@@ -1,7 +1,6 @@
 package com.curtesmalteser.expressgallery.activity;
 
 import android.content.Context;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.PagerAdapter;
@@ -14,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.curtesmalteser.expressgallery.R;
-import com.curtesmalteser.expressgallery.api.LocalModel;
+import com.curtesmalteser.expressgallery.api.LocalEntry;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 
 public class SlideshowDialogFragment extends DialogFragment {
     private String TAG = SlideshowDialogFragment.class.getSimpleName();
-    private ArrayList<LocalModel> images;
+    private ArrayList<LocalEntry> images;
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private TextView lblCount, lblTitle, lblDate;
@@ -47,7 +46,7 @@ public class SlideshowDialogFragment extends DialogFragment {
         lblTitle = (TextView) v.findViewById(R.id.title);
         lblDate = (TextView) v.findViewById(R.id.date);
 
-        images = (ArrayList<LocalModel>) getArguments().getSerializable("images");
+        images = (ArrayList<LocalEntry>) getArguments().getSerializable("images");
         selectedPosition = getArguments().getInt("position");
 
         Log.e(TAG, "position: " + selectedPosition);
@@ -89,7 +88,7 @@ public class SlideshowDialogFragment extends DialogFragment {
     private void displayMetaInfo(int position) {
         lblCount.setText((position + 1) + " of " + images.size());
 
-        LocalModel image = images.get(position);
+        LocalEntry image = images.get(position);
         //lblTitle.setText(image.getName());
        // lblDate.setText(image.getTimestamp());
     }
@@ -116,7 +115,7 @@ public class SlideshowDialogFragment extends DialogFragment {
 
             final ImageView imageViewPreview = (ImageView) view.findViewById(R.id.image_preview);
 
-            final LocalModel image = images.get(position);
+            final LocalEntry image = images.get(position);
 
             Picasso.with(getContext())
                     .load(image.getUrl())

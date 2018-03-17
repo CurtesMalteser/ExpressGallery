@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.curtesmalteser.expressgallery.R;
-import com.curtesmalteser.expressgallery.api.LocalModel;
+import com.curtesmalteser.expressgallery.api.LocalEntry;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -31,14 +31,14 @@ import butterknife.ButterKnife;
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.MoviesViewHolder> {
 
     private Context mContext;
-    private ArrayList<LocalModel> mMoviesArrayList;
+    private ArrayList<LocalEntry> mMoviesArrayList;
     final private ListItemClickListener mOnClickListener;
 
     public interface ListItemClickListener {
-        void onListItemClick(LocalModel datum);
+        void onListItemClick(LocalEntry datum);
     }
 
-    public ImagesAdapter(Context context, ArrayList<LocalModel> moviesModelArrayList,
+    public ImagesAdapter(Context context, ArrayList<LocalEntry> moviesModelArrayList,
                          ListItemClickListener listener) {
         this.mContext = context;
         this.mMoviesArrayList = moviesModelArrayList;
@@ -85,7 +85,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.MoviesView
         }
 
         void bind(int listIndex) {
-            final LocalModel model = mMoviesArrayList.get(listIndex);
+            final LocalEntry model = mMoviesArrayList.get(listIndex);
 
             Picasso.with(mContext)
                     .load(model.getUrl())
@@ -123,7 +123,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.MoviesView
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
-            LocalModel mediaModelList = mMoviesArrayList.get(clickedPosition);
+            LocalEntry mediaModelList = mMoviesArrayList.get(clickedPosition);
             mOnClickListener.onListItemClick(mediaModelList);
         }
     }

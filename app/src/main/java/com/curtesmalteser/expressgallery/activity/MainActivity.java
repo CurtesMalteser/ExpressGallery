@@ -2,16 +2,12 @@ package com.curtesmalteser.expressgallery.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,19 +16,20 @@ import com.curtesmalteser.expressgallery.BuildConfig;
 import com.curtesmalteser.expressgallery.R;
 import com.curtesmalteser.expressgallery.adapter.ImagesAdapter;
 import com.curtesmalteser.expressgallery.api.Datum;
-import com.curtesmalteser.expressgallery.api.LocalModel;
+import com.curtesmalteser.expressgallery.api.LocalEntry;
 import com.curtesmalteser.expressgallery.api.TokenModel;
-import com.curtesmalteser.expressgallery.db.AppDatabase;
+import com.curtesmalteser.expressgallery.data.AppDatabase;
+import com.curtesmalteser.expressgallery.data.InjectorUtils;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPI;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPIInterface;
 import com.curtesmalteser.expressgallery.viewmodel.LocalDataViewModel;
+import com.facebook.stetho.Stetho;
 
 import java.util.ArrayList;
 
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,7 +50,7 @@ public class MainActivity extends AppCompatActivity
     ViewGroup rootView;
 
     private ImagesAdapter listAdapter;
-    private ArrayList<LocalModel> resultList = new ArrayList<>();
+    private ArrayList<LocalEntry> resultList = new ArrayList<>();
 
     AppDatabase db;
     private LocalDataViewModel mViewModel;
@@ -63,6 +60,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mViewModel = ViewModelProviders.of(this).get(LocalDataViewModel.class);
+
+        // TODO --->>> Remove this (just to test the API call)
+        InjectorUtils.provideRepository(this).initializeData();
+
+        Stetho.initializeWithDefaults(this);
         ButterKnife.bind(this);
 
         db = Room.databaseBuilder(getApplicationContext(),
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
 
-        if (readPreferences() != null && readPreferences().equals("noValues")) {
+       /* if (readPreferences() != null && readPreferences().equals("noValues")) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://api.instagram.com/oauth/authorize/" + "?client_id=" + clientID + "&redirect_uri=" + redirectURI + "&response_type=code"));
             startActivity(intent);
         } else {
@@ -87,7 +89,7 @@ public class MainActivity extends AppCompatActivity
         mViewModel.getLocalModel().observe(this, localModel -> {
             // TODO --->>> Update the UI
            // if(localModel != null )bindWeatherToUI(localModel);
-        });
+        });*/
 
 
     }
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity
 
                 for (Datum datum : response.body().getData()) {
                     Log.d("AJDB", "URL: " + datum.getImages().getLowResolution().getUrl());
-                    resultList.add(new LocalModel(datum.getImages().getStandardResolution().getUrl(),
+                    resultList.add(new LocalEntry(datum.getImages().getStandardResolution().getUrl(),
                             datum.getLikes().getCount(),
                             datum.getComments().getCount()));
                     listAdapter.notifyDataSetChanged();
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListItemClick(LocalModel datum) {
+    public void onListItemClick(LocalEntry datum) {
         recyclerView.addOnItemTouchListener(new ImagesAdapter.RecyclerTouchListener(getApplicationContext(), recyclerView, new ImagesAdapter.ClickListener() {
             @Override
             public void onClick(View view, int position) {
