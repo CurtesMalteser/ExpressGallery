@@ -12,6 +12,7 @@ import com.curtesmalteser.expressgallery.retrofit.MediaAPIInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by António "Curtes Malteser" Bastião on 17/03/2018.
@@ -28,25 +29,32 @@ public class LocalDataRepository {
     private final AppExecutors mExecutors;
     private boolean mInitialized = false;
 
+    private long timestamp;
+
+    private static final long STALE_MS = TimeUnit.MINUTES.toMillis(2);
+
+
+
     private LocalDataRepository(LocalDataDao localDataDao,
                                 MediaNetworkDataSource mediaNetworkDataSource,
-                               AppExecutors executors) {
-       this.mLocalDataDao = localDataDao;
+                                AppExecutors executors) {
+        this.mLocalDataDao = localDataDao;
         this.mMediaNetworkDataSource = mediaNetworkDataSource;
         this.mExecutors = executors;
+        this.timestamp = System.currentTimeMillis();
 
         // As long as the repository exists, observe the network LiveData.
         // If that LiveData changes, update the database.
         LiveData<ArrayList<LocalEntry>> networkData = mediaNetworkDataSource.getCurrentWeatherForecasts();
         networkData.observeForever((localEntries) ->
                 mExecutors.diskIO().execute(() -> {
-            // Deletes old historical data
-            deleteOldData();
-            Log.d(LOG_TAG, "Old weather deleted");
-            // Insert our new weather data into Sunshine's database
-            mLocalDataDao.bulkInsert(localEntries);
-            Log.d(LOG_TAG, "New values inserted");
-        }));
+                    // Deletes old historical data
+                    deleteOldData();
+                    Log.d(LOG_TAG, "Old weather deleted");
+                    // Insert our new weather data into Sunshine's database
+                    mLocalDataDao.bulkInsert(localEntries);
+                    Log.d(LOG_TAG, "New values inserted");
+                }));
     }
 
     public synchronized static LocalDataRepository getInstance(
@@ -71,50 +79,31 @@ public class LocalDataRepository {
         if (mInitialized) return;
         mInitialized = true;
 
-       // mMediaNetworkDataSource.scheduleRecurringFetchWeatherSync();
+        // mMediaNetworkDataSource.scheduleRecurringFetchWeatherSync();
 
         mExecutors.diskIO().execute(() -> {
-           // if (isFetchNeeded()) {
+            if (isFetchNeeded()) {
                 startFetchWeatherService();
-           // }
+            }
         });
     }
-
-    /**
-     * Database related operations
-     **/
 
     public LiveData<List<LocalEntry>> getAll() {
         initializeData();
         return mLocalDataDao.getAll();
     }
 
-    /**
-     * Deletes old weather data because we don't need to keep multiple days' data
-     */
     private void deleteOldData() {
         mLocalDataDao.deleteTable();
     }
 
-    /**
-     * Checks if there are enough days of future weather for the app to display all the needed data.
-     *
-     * @return Whether a fetch is needed
-     */
-   /* private boolean isFetchNeeded() {
-        Date today = SunshineDateUtils.getNormalizedUtcDateForToday();
-        int count = mLocalDataDao.countAllFutureWeather(today);
-        return (count < WeatherNetworkDataSource.NUM_DAYS);
-    }*/
-
-    /**
-     * Network related operation
-     */
-
-    private void startFetchWeatherService() {
-        mMediaNetworkDataSource.startFetchWeatherService();
+    private boolean isFetchNeeded() {
+        return System.currentTimeMillis() - timestamp < STALE_MS;
     }
 
-
+    private void startFetchWeatherService() {
+       // mMediaNetworkDataSource.startFetchWeatherService();
+        mMediaNetworkDataSource.fetchWeather();
+    }
 
 }

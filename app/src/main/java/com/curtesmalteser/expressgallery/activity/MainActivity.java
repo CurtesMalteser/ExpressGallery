@@ -7,7 +7,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +17,14 @@ import android.view.ViewGroup;
 import com.curtesmalteser.expressgallery.BuildConfig;
 import com.curtesmalteser.expressgallery.R;
 import com.curtesmalteser.expressgallery.adapter.ImagesAdapter;
-import com.curtesmalteser.expressgallery.api.Datum;
 import com.curtesmalteser.expressgallery.api.LocalEntry;
 import com.curtesmalteser.expressgallery.api.TokenModel;
 import com.curtesmalteser.expressgallery.data.AppDatabase;
 import com.curtesmalteser.expressgallery.data.InjectorUtils;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPI;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPIInterface;
-import com.curtesmalteser.expressgallery.viewmodel.LocalDataViewModel;
+import com.curtesmalteser.expressgallery.viewmodel.MainActivityViewModelFactory;
+import com.curtesmalteser.expressgallery.viewmodel.MainActivityViewModel;
 import com.facebook.stetho.Stetho;
 
 import java.util.ArrayList;
@@ -53,18 +55,17 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<LocalEntry> resultList = new ArrayList<>();
 
     AppDatabase db;
-    private LocalDataViewModel mViewModel;
+    private MainActivityViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mViewModel = ViewModelProviders.of(this).get(LocalDataViewModel.class);
-
-        // TODO --->>> Remove this (just to test the API call)
-        InjectorUtils.provideRepository(this).initializeData();
+        MainActivityViewModelFactory factory = InjectorUtils.provideDetailViewModelFactory(this.getApplicationContext());
+        mViewModel = ViewModelProviders.of(this, factory).get(MainActivityViewModel.class);
 
         Stetho.initializeWithDefaults(this);
+
         ButterKnife.bind(this);
 
         db = Room.databaseBuilder(getApplicationContext(),
@@ -73,53 +74,23 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
 
-       /* if (readPreferences() != null && readPreferences().equals("noValues")) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://api.instagram.com/oauth/authorize/" + "?client_id=" + clientID + "&redirect_uri=" + redirectURI + "&response_type=code"));
-            startActivity(intent);
-        } else {
-            getData();
-        }
 
-        listAdapter = new ImagesAdapter(this, resultList, this);
-        recyclerView.setAdapter(listAdapter);
 
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
-
-        mViewModel.getLocalModel().observe(this, localModel -> {
+        mViewModel.getWeather().observe(this, localModel -> {
             // TODO --->>> Update the UI
            // if(localModel != null )bindWeatherToUI(localModel);
-        });*/
+            Log.d("AJDB", "size: " + localModel.size());
+            resultList = (ArrayList<LocalEntry>) localModel;
+            //listAdapter.notifyDataSetChanged();
 
+            listAdapter = new ImagesAdapter(this, resultList, this);
+            recyclerView.setAdapter(listAdapter);
 
-    }
-
-    private void getData() {
-        MediaAPIInterface apiInterface = MediaAPI.getClient(getString(R.string.base_url)).create(MediaAPIInterface.class);
-        Call<Datum> call;
-
-        call = apiInterface.getMedia(readPreferences());
-        call.enqueue(new Callback<Datum>() {
-            @Override
-            public void onResponse(Call<Datum> call, Response<Datum> response) {
-                response.body().getData().size();
-
-
-                for (Datum datum : response.body().getData()) {
-                    Log.d("AJDB", "URL: " + datum.getImages().getLowResolution().getUrl());
-                    resultList.add(new LocalEntry(datum.getImages().getStandardResolution().getUrl(),
-                            datum.getLikes().getCount(),
-                            datum.getComments().getCount()));
-                    listAdapter.notifyDataSetChanged();
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Datum> call, Throwable t) {
-
-            }
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
         });
+
+
     }
 
     @Override
@@ -141,7 +112,7 @@ public class MainActivity extends AppCompatActivity
             call.enqueue(new Callback<TokenModel>() {
                 @Override
                 public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
-                    Log.d("TAG", "TokenModel: " + response.body().getAccessToken());
+                    if (response != null)
                     savePreferences(response.body().getAccessToken());
                 }
 
@@ -180,10 +151,5 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences.Editor sharedPreferences = this.getSharedPreferences("pictures_preferences", MODE_PRIVATE).edit();
         sharedPreferences.putString("token", token);
         sharedPreferences.apply();
-    }
-
-    private String readPreferences() {
-        SharedPreferences sharedPreferences = this.getSharedPreferences("pictures_preferences", MODE_PRIVATE);
-        return sharedPreferences.getString("token", "noValues");
     }
 }

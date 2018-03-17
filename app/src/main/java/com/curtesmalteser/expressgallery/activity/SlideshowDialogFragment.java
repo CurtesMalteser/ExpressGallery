@@ -20,6 +20,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by António "Curtes Malteser" Bastião on 16/03/2018.
  */
@@ -27,9 +30,21 @@ import java.util.ArrayList;
 public class SlideshowDialogFragment extends DialogFragment {
     private String TAG = SlideshowDialogFragment.class.getSimpleName();
     private ArrayList<LocalEntry> images;
-    private ViewPager viewPager;
+
     private MyViewPagerAdapter myViewPagerAdapter;
-    private TextView lblCount, lblTitle, lblDate;
+
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
+
+    @BindView(R.id.lbl_count)
+    TextView lblCount;
+
+    @BindView(R.id.title)
+    TextView lblTitle;
+
+    @BindView(R.id.date)
+    TextView lblDate;
+
     private int selectedPosition = 0;
 
     static SlideshowDialogFragment newInstance() {
@@ -40,12 +55,9 @@ public class SlideshowDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_image_slider, container, false);
-        viewPager = (ViewPager) v.findViewById(R.id.viewpager);
-        lblCount = (TextView) v.findViewById(R.id.lbl_count);
-        lblTitle = (TextView) v.findViewById(R.id.title);
-        lblDate = (TextView) v.findViewById(R.id.date);
-
+        View view = inflater.inflate(R.layout.fragment_image_slider, container, false);
+        ButterKnife.bind(this, view);
+       
         images = (ArrayList<LocalEntry>) getArguments().getSerializable("images");
         selectedPosition = getArguments().getInt("position");
 
@@ -58,7 +70,7 @@ public class SlideshowDialogFragment extends DialogFragment {
 
         setCurrentItem(selectedPosition);
 
-        return v;
+        return view;
     }
 
     private void setCurrentItem(int position) {
@@ -90,7 +102,7 @@ public class SlideshowDialogFragment extends DialogFragment {
 
         LocalEntry image = images.get(position);
         //lblTitle.setText(image.getName());
-       // lblDate.setText(image.getTimestamp());
+        // lblDate.setText(image.getTimestamp());
     }
 
     @Override
@@ -130,7 +142,7 @@ public class SlideshowDialogFragment extends DialogFragment {
                         public void onError() {
                             //Try again online if cache failed
                             Picasso.with(getContext())
-                                    .load( image.getUrl() )
+                                    .load(image.getUrl())
                                     .error(R.drawable.ic_launcher_background)
                                     .into(imageViewPreview, new Callback() {
                                         @Override

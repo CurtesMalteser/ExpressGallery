@@ -39,16 +39,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class MediaNetworkDataSource {
 
-    // The number of days we want our API to return, set to 14 days or two weeks
-    public static final int NUM_DAYS = 14;
     private static final String LOG_TAG = MediaNetworkDataSource.class.getSimpleName();
-
-    // Interval at which to sync with the weather. Use TimeUnit for convenience, rather than
-    // writing out a bunch of multiplication ourselves and risk making a silly mistake.
-    private static final int SYNC_INTERVAL_HOURS = 3;
-    private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
-    private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / 3;
-    private static final String SUNSHINE_SYNC_TAG = "sunshine-sync";
 
     public static final String SHARED_PREFERENCES_NAME = "pictures_preferences";
     public static final String TOKEN = "token";
@@ -58,19 +49,15 @@ public class MediaNetworkDataSource {
     private static MediaNetworkDataSource sInstance;
     private final Context mContext;
 
-    // LiveData storing the latest downloaded weather forecasts
     private final MutableLiveData<ArrayList<LocalEntry>> mDownloadedMedia;
     private final AppExecutors mExecutors;
 
     private MediaNetworkDataSource(Context context, AppExecutors executors) {
         mContext = context;
         mExecutors = executors;
-        mDownloadedMedia = new MutableLiveData<ArrayList<LocalEntry>>();
+        mDownloadedMedia = new MutableLiveData<>();
     }
 
-    /**
-     * Get the singleton for this class
-     */
     public static MediaNetworkDataSource getInstance(Context context, AppExecutors executors) {
         Log.d(LOG_TAG, "Getting the network data source");
         if (sInstance == null) {
@@ -85,44 +72,6 @@ public class MediaNetworkDataSource {
     public LiveData<ArrayList<LocalEntry>> getCurrentWeatherForecasts() {
         return mDownloadedMedia;
     }
-
-    public void startFetchWeatherService() {
-        Intent intentToFetch = new Intent(mContext, MediaSyncIntentService.class);
-        mContext.startService(intentToFetch);
-        Log.d(LOG_TAG, "Service created");
-    }
-
-
-    public void scheduleRecurringFetchWeatherSync() {
-        Driver driver = new GooglePlayDriver(mContext);
-        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
-
-        // Create the Job to periodically sync Sunshine
-        Job syncSunshineJob = dispatcher.newJobBuilder()
-
-                .setService(MediaFirebaseJobService.class)
-
-                .setTag(SUNSHINE_SYNC_TAG)
-
-                .setConstraints(Constraint.ON_ANY_NETWORK)
-
-                .setLifetime(Lifetime.FOREVER)
-
-                .setRecurring(true)
-
-                .setTrigger(Trigger.executionWindow(
-                        SYNC_INTERVAL_SECONDS,
-                        SYNC_INTERVAL_SECONDS + SYNC_FLEXTIME_SECONDS))
-
-                .setReplaceCurrent(true)
-
-                .build();
-
-        // Schedule the Job with the dispatcher
-        dispatcher.schedule(syncSunshineJob);
-        Log.d(LOG_TAG, "Job scheduled");
-    }
-
 
     void fetchWeather() {
         Log.d(LOG_TAG, "Fetch weather started");
@@ -143,7 +92,6 @@ public class MediaNetworkDataSource {
                         ArrayList<LocalEntry> entry = new ArrayList<>();
 
                         for (Datum datum : response.body().getData()) {
-                            Log.d("AJDB", "URL: " + datum.getImages().getLowResolution().getUrl());
                             entry.add(new LocalEntry(datum.getImages().getStandardResolution().getUrl(),
                                     datum.getLikes().getCount(),
                                     datum.getComments().getCount()));

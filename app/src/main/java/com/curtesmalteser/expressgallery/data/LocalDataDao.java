@@ -25,9 +25,6 @@ public interface LocalDataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void bulkInsert(ArrayList<LocalEntry> locals);
 
-    @Delete
-    void delete(LocalEntry local);
-
     @Query("DELETE FROM local_data")
-    public void deleteTable();
+    void deleteTable();
 }

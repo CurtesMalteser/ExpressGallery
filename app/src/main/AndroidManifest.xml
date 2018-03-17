@@ -28,10 +28,6 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".data.MediaSyncIntentService"
-            android:exported="false" />
     </application>
 
 </manifest>
