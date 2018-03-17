@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ExpressGallery</string>
+    <string name="base_url" translatable="false">https://api.instagram.com/v1/</string>
+    <string name="auth_url" translatable="false">https://api.instagram.com/</string>
+    <string name="likes">Likes:</string>
+    <string name="comments">Comments:</string>
+</resources>
