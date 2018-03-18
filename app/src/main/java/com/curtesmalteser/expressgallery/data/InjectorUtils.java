@@ -32,7 +32,7 @@ public class InjectorUtils {
 
     public static MainActivityViewModelFactory provideDetailViewModelFactory(Context context) {
         LocalDataRepository repository = provideRepository(context.getApplicationContext());
-        return new MainActivityViewModelFactory(repository);
+        return new MainActivityViewModelFactory(context.getApplicationContext(), repository);
     }
 
    /* public static MainViewModelFactory provideMainActivityViewModelFactory(Context context) {

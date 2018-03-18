@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.curtesmalteser.expressgallery.BuildConfig;
 import com.curtesmalteser.expressgallery.R;
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.my_toolbar)
     Toolbar myToolbar;
 
+    @BindView(R.id.imageUser)
+    ImageButton imageUser;
+
     private ImagesAdapter listAdapter;
     private ArrayList<LocalEntry> resultList = new ArrayList<>();
 
@@ -72,13 +76,14 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        mViewModel.getWeather().observe(this, localModel -> {
+        mViewModel.getData().observe(this, localModel -> {
             if(localModel != null )bindView(localModel);
 
              if (savedInstanceState != null && mRecyclerView != null)
                  mRecyclerView.getLayoutManager().onRestoreInstanceState(stateRecyclerView);
         });
 
+        imageUser.setOnClickListener(v -> mViewModel.onClickPost());
 
     }
 
