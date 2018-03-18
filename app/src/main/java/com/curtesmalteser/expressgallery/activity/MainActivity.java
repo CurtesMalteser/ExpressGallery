@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,18 +42,14 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity
         implements ImagesAdapter.ListItemClickListener {
 
-    private String clientID = BuildConfig.CLIENT_ID;
-    private String clientSecret = BuildConfig.CLIENT_SECRET;
-    private String redirectURI = "https://com.curtesmalteser.picgallery";
-    private final String STATE_RECYCLER_VIEW = "stateRecyclerView";
-
-    private Uri uri;
-
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
     @BindView(R.id.rootLayout)
     ViewGroup rootView;
+
+    @BindView(R.id.my_toolbar)
+    Toolbar myToolbar;
 
     private ImagesAdapter listAdapter;
     private ArrayList<LocalEntry> resultList = new ArrayList<>();
@@ -72,27 +69,33 @@ public class MainActivity extends AppCompatActivity
         Stetho.initializeWithDefaults(this);
 
         ButterKnife.bind(this);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mViewModel.getWeather().observe(this, localModel -> {
             if(localModel != null )bindView(localModel);
 
-             if (savedInstanceState != null) mRecyclerView.getLayoutManager().onRestoreInstanceState(stateRecyclerView);
+             if (savedInstanceState != null && mRecyclerView != null)
+                 mRecyclerView.getLayoutManager().onRestoreInstanceState(stateRecyclerView);
         });
 
 
     }
 
-    @Override
+  /*  @Override
     protected void onResume() {
         super.onResume();
+
+        String redirectURI = "https://com.curtesmalteser.picgallery";
+
         uri = getIntent().getData();
         if (uri != null) {
             MediaAPIInterface apiInterface = MediaAPI.getClient(getString(R.string.auth_url)).create(MediaAPIInterface.class);
             Call<TokenModel> call;
 
             call = apiInterface.getAuth(
-                    clientID,
-                    clientSecret,
+                    BuildConfig.CLIENT_ID,
+                    BuildConfig.CLIENT_SECRET,
                     "authorization_code",
                     redirectURI,
                     uri.getQueryParameter("code")
@@ -111,7 +114,7 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
-    }
+    }*/
 
     @Override
     public void onListItemClick(LocalEntry datum) {
@@ -136,11 +139,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void savePreferences(String token) {
+   /* private void savePreferences(String token) {
         SharedPreferences.Editor sharedPreferences = this.getSharedPreferences("pictures_preferences", MODE_PRIVATE).edit();
         sharedPreferences.putString("token", token);
         sharedPreferences.apply();
-    }
+    }*/
 
     private void bindView(List<LocalEntry> localModel) {
         resultList = (ArrayList<LocalEntry>) localModel;

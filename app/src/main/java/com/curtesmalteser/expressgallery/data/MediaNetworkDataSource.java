@@ -15,16 +15,8 @@ import com.curtesmalteser.expressgallery.api.Datum;
 import com.curtesmalteser.expressgallery.api.LocalEntry;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPI;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPIInterface;
-import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.Driver;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.Trigger;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;

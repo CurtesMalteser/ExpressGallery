@@ -5,4 +5,5 @@
     <string name="likes">Likes:</string>
     <string name="comments">Comments:</string>
     <string name="redirect_uri" translatable="false">https://com.curtesmalteser.picgallery</string>
+    <string name="logout">Logout</string>
 </resources>

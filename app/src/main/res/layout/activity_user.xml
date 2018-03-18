@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.curtesmalteser.expressgallery.activity.UserActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/user_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextAppearance="@font/alex_brush"
+        app:titleTextColor="#ffffffff">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_camera_with_heart" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/alex_brush"
+            android:paddingEnd="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingStart="8dp"
+            android:text="@string/app_name"
+            android:textColor="#ffffff"
+            android:textSize="20dp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileImage"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
+        android:layout_marginTop="8dp"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvWelcome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_toolbar"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:srcCompat="@drawable/ic_person_black_24dp" />
+
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/tvFullName"
+        app:layout_constraintEnd_toStartOf="@+id/profileImage"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/profileImage"
+        app:layout_constraintTop_toBottomOf="@+id/profileImage"
+        tools:text="Welcome" />
+
+    <TextView
+        android:id="@+id/tvFullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogOut"
+        app:layout_constraintEnd_toStartOf="@+id/profileImage"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/profileImage"
+        app:layout_constraintTop_toBottomOf="@+id/tvWelcome"
+        tools:text="António" />
+
+    <Button
+        android:id="@+id/btnLogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/logout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvFullName"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvFullName"
+        app:layout_constraintTop_toBottomOf="@+id/tvFullName" />
+
+</android.support.constraint.ConstraintLayout>
