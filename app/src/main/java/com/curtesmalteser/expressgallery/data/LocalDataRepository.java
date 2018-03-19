@@ -119,7 +119,6 @@ public class LocalDataRepository {
     }
 
     public void getUserFromNetwork(String code) {
-        Log.d("XPTO", "getUserFromNetwork: " + code);
         mMediaNetworkDataSource.fetchUser(code);
     }
 

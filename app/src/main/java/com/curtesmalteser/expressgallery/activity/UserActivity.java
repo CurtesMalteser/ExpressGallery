@@ -1,7 +1,6 @@
 package com.curtesmalteser.expressgallery.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,15 +11,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.curtesmalteser.expressgallery.AppExecutors;
-import com.curtesmalteser.expressgallery.BuildConfig;
 import com.curtesmalteser.expressgallery.R;
-import com.curtesmalteser.expressgallery.api.TokenModel;
-import com.curtesmalteser.expressgallery.data.AppDatabase;
 import com.curtesmalteser.expressgallery.data.InjectorUtils;
-import com.curtesmalteser.expressgallery.data.UserEntry;
-import com.curtesmalteser.expressgallery.retrofit.MediaAPI;
-import com.curtesmalteser.expressgallery.retrofit.MediaAPIInterface;
 import com.curtesmalteser.expressgallery.viewmodel.UserActivityViewModel;
 import com.curtesmalteser.expressgallery.viewmodel.UserViewModelFactory;
 import com.squareup.picasso.NetworkPolicy;
@@ -28,9 +20,6 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class UserActivity extends AppCompatActivity {
 
@@ -69,29 +58,26 @@ public class UserActivity extends AppCompatActivity {
         setSupportActionBar(userToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        Uri uri = getIntent().getData();
+        if (uri != null) {
+            mViewModel.getUser(uri.getQueryParameter("code"));
+        }
+
         mViewModel.getUser().observe(this, userEntry -> {
             if (userEntry != null) {
-                Log.d(TAG, "onCreate: " + userEntry.fullName);
                 getUserProfilePic(userEntry.getProfilePicture());
                 // tvWelcome.setText();
                 tvFullName.setText(userEntry.getFullName());
             }
         });
 
-        Uri uri = getIntent().getData();
-        if (uri != null) {
-            mViewModel.getCurrentName(uri.getQueryParameter("code"));
-            Log.d("XPTO", "onCreate: " + uri.getQueryParameter("code"));
-
-        }
-
         imageGalley.setOnClickListener(v -> mViewModel.onClickPost());
 
-     /*   btnLogOut.setOnClickListener(v -> {
+        btnLogOut.setOnClickListener(v -> {
+
+            // todo -> complete the logout
             Log.d(TAG, "onCreate: clicked");
-            String anotherName = "John Doe";
-            mViewModel.getCurrentName(anotherName);
-        });*/
+        });
     }
 
     private void getUserProfilePic(String url) {

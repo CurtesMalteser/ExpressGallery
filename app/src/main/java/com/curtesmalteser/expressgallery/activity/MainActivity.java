@@ -87,40 +87,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-  /*  @Override
-    protected void onResume() {
-        super.onResume();
-
-        String redirectURI = "https://com.curtesmalteser.picgallery";
-
-        uri = getIntent().getData();
-        if (uri != null) {
-            MediaAPIInterface apiInterface = MediaAPI.getClient(getString(R.string.auth_url)).create(MediaAPIInterface.class);
-            Call<TokenModel> call;
-
-            call = apiInterface.getAuth(
-                    BuildConfig.CLIENT_ID,
-                    BuildConfig.CLIENT_SECRET,
-                    "authorization_code",
-                    redirectURI,
-                    uri.getQueryParameter("code")
-            );
-
-            call.enqueue(new Callback<TokenModel>() {
-                @Override
-                public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
-                    if (response.body().getAccessToken() != null)
-                    savePreferences(response.body().getAccessToken());
-                }
-
-                @Override
-                public void onFailure(Call<TokenModel> call, Throwable t) {
-
-                }
-            });
-        }
-    }*/
-
     @Override
     public void onListItemClick(LocalEntry datum) {
         mRecyclerView.addOnItemTouchListener(new ImagesAdapter.RecyclerTouchListener(getApplicationContext(), mRecyclerView, new ImagesAdapter.ClickListener() {
@@ -143,12 +109,6 @@ public class MainActivity extends AppCompatActivity
         }));
 
     }
-
-   /* private void savePreferences(String token) {
-        SharedPreferences.Editor sharedPreferences = this.getSharedPreferences("pictures_preferences", MODE_PRIVATE).edit();
-        sharedPreferences.putString("token", token);
-        sharedPreferences.apply();
-    }*/
 
     private void bindView(List<LocalEntry> localModel) {
         resultList = (ArrayList<LocalEntry>) localModel;

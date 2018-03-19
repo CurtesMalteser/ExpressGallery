@@ -29,7 +29,6 @@ import static android.content.Context.MODE_PRIVATE;
  * Created by António "Curtes Malteser" Bastião on 17/03/2018.
  */
 
-
 public class MediaNetworkDataSource {
 
     private static final String LOG_TAG = MediaNetworkDataSource.class.getSimpleName();
@@ -114,32 +113,39 @@ public class MediaNetworkDataSource {
 
     public void fetchUser(String code) {
         Log.d("XPTO", "fetchUser: " + code);
-            String redirectURI = "https://com.curtesmalteser.picgallery";
+        String redirectURI = "https://com.curtesmalteser.picgallery";
 
-                MediaAPIInterface apiInterface = MediaAPI.getClient(mContext.getString(R.string.auth_url)).create(MediaAPIInterface.class);
-                Call<TokenModel> call;
+        MediaAPIInterface apiInterface = MediaAPI.getClient(mContext.getString(R.string.auth_url)).create(MediaAPIInterface.class);
 
-                call = apiInterface.getAuth(
-                        BuildConfig.CLIENT_ID,
-                        BuildConfig.CLIENT_SECRET,
-                        "authorization_code",
-                        redirectURI,
-                        code
-                );
+        if (!code.equals(null)) {
+            Call<TokenModel> call;
+            call = apiInterface.getAuth(
+                    BuildConfig.CLIENT_ID,
+                    BuildConfig.CLIENT_SECRET,
+                    "authorization_code",
+                    redirectURI,
+                    code
+            );
 
-                call.enqueue(new Callback<TokenModel>() {
-                    @Override
-                    public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
-                        if (response.body().getAccessToken() != null) {
-                            savePreferences(response.body().getAccessToken());
-                        }
+            call.enqueue(new Callback<TokenModel>() {
+                @Override
+                public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
+                    if (response.body().getAccessToken() != null) {
+                        savePreferences(response.body().getAccessToken());
+                        mDownloadedUser.postValue(new UserEntry(response.body().getUser().getId(),
+                                response.body().getUser().getFullName(),
+                                response.body().getUser().getUsername(),
+                                response.body().getUser().getProfilePicture()
+                        ));
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<TokenModel> call, Throwable t) {
+                @Override
+                public void onFailure(Call<TokenModel> call, Throwable t) {
 
-                    }
-                });
+                }
+            });
+        }
     }
 
     private void savePreferences(String token) {
