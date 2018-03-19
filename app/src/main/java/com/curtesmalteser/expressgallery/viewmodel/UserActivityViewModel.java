@@ -5,6 +5,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.ObservableField;
+import android.util.Log;
 
 import com.curtesmalteser.expressgallery.activity.MainActivity;
 import com.curtesmalteser.expressgallery.data.LocalDataRepository;
@@ -16,7 +18,11 @@ import com.curtesmalteser.expressgallery.data.UserEntry;
 
 public class UserActivityViewModel extends ViewModel {
 
+    private static final String TAG = UserActivityViewModel.class.getSimpleName();
+
     private LiveData<UserEntry> mUserEntry;
+
+    private ObservableField<String> mCurrentName = new ObservableField<>();
 
     private final Context mContext;
 
@@ -33,6 +39,8 @@ public class UserActivityViewModel extends ViewModel {
         return mUserEntry;
     }
 
+
+
     public void setUser(MutableLiveData<UserEntry> userEntry) {
         mUserEntry = userEntry;
     }
@@ -45,6 +53,18 @@ public class UserActivityViewModel extends ViewModel {
         Intent intent = new Intent(mContext.getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
+    }
+
+
+
+    public ObservableField<String> getCurrentName(String name) {
+       // if (mCurrentName == null) {
+            mCurrentName.set(name);
+            Log.d("XPTO", "getCurrentName: " + mCurrentName.get());
+        mRepository.getUserFromNetwork(name);
+
+        //}
+        return mCurrentName;
     }
 
 }

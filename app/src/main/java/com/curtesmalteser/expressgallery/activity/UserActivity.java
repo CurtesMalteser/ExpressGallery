@@ -1,11 +1,10 @@
 package com.curtesmalteser.expressgallery.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Button;
@@ -19,7 +18,6 @@ import com.curtesmalteser.expressgallery.R;
 import com.curtesmalteser.expressgallery.api.TokenModel;
 import com.curtesmalteser.expressgallery.data.AppDatabase;
 import com.curtesmalteser.expressgallery.data.InjectorUtils;
-import com.curtesmalteser.expressgallery.data.UserDao;
 import com.curtesmalteser.expressgallery.data.UserEntry;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPI;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPIInterface;
@@ -80,51 +78,20 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        String redirectURI = "https://com.curtesmalteser.picgallery";
-
         Uri uri = getIntent().getData();
         if (uri != null) {
-            MediaAPIInterface apiInterface = MediaAPI.getClient(getString(R.string.auth_url)).create(MediaAPIInterface.class);
-            Call<TokenModel> call;
+            mViewModel.getCurrentName(uri.getQueryParameter("code"));
+            Log.d("XPTO", "onCreate: " + uri.getQueryParameter("code"));
 
-            call = apiInterface.getAuth(
-                    BuildConfig.CLIENT_ID,
-                    BuildConfig.CLIENT_SECRET,
-                    "authorization_code",
-                    redirectURI,
-                    uri.getQueryParameter("code")
-            );
-
-            call.enqueue(new Callback<TokenModel>() {
-                @Override
-                public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
-                    AppDatabase appDatabase = AppDatabase.getInstance(getBaseContext());
-
-                    if (response.body().getAccessToken() != null) {
-                        savePreferences(response.body().getAccessToken());
-                        AppExecutors mExecutors = AppExecutors.getInstance();
-                        mExecutors.diskIO().execute(() -> {
-                            appDatabase.userDao().deleteTable();
-                            appDatabase.userDao().insertUser(new UserEntry(response.body().getUser().getId(),
-                                    response.body().getUser().getFullName(),
-                                    response.body().getUser().getUsername(),
-                                    response.body().getUser().getProfilePicture()));
-                        });
-
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<TokenModel> call, Throwable t) {
-
-                }
-            });
         }
 
+        imageGalley.setOnClickListener(v -> mViewModel.onClickPost());
 
-        imageGalley.setOnClickListener(v -> {
-            mViewModel.onClickPost();
-        });
+     /*   btnLogOut.setOnClickListener(v -> {
+            Log.d(TAG, "onCreate: clicked");
+            String anotherName = "John Doe";
+            mViewModel.getCurrentName(anotherName);
+        });*/
     }
 
     private void getUserProfilePic(String url) {
@@ -139,7 +106,6 @@ public class UserActivity extends AppCompatActivity {
 
                     @Override
                     public void onError() {
-                        //Try again online if cache failed
                         Picasso.with(getBaseContext())
                                 .load(url)
                                 .error(R.drawable.ic_launcher_background)
@@ -157,46 +123,4 @@ public class UserActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-
-        String redirectURI = "https://com.curtesmalteser.picgallery";
-
-        Uri uri = getIntent().getData();
-        if (uri != null) {
-            MediaAPIInterface apiInterface = MediaAPI.getClient(getString(R.string.auth_url)).create(MediaAPIInterface.class);
-            Call<TokenModel> call;
-
-            call = apiInterface.getAuth(
-                    BuildConfig.CLIENT_ID,
-                    BuildConfig.CLIENT_SECRET,
-                    "authorization_code",
-                    redirectURI,
-                    uri.getQueryParameter("code")
-            );
-
-            call.enqueue(new Callback<TokenModel>() {
-                @Override
-                public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
-                    if (response.body().getAccessToken() != null)
-                        savePreferences(response.body().getAccessToken());
-                }
-
-                @Override
-                public void onFailure(Call<TokenModel> call, Throwable t) {
-
-                }
-            });
-        }
-    }*/
-
-    private void savePreferences(String token) {
-        SharedPreferences.Editor sharedPreferences = this.getSharedPreferences("pictures_preferences", MODE_PRIVATE).edit();
-        sharedPreferences.putString("token", token);
-        sharedPreferences.apply();
-    }
-
-
 }

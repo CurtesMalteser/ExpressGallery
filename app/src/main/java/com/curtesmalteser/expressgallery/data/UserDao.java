@@ -22,5 +22,5 @@ public interface UserDao {
     void insertUser(UserEntry user);
 
     @Query("DELETE FROM user")
-    void deleteTable();
+    int deleteTable();
 }

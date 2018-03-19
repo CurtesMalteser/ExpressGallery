@@ -25,13 +25,10 @@ public class LocalDataRepository {
     private final UserDao mUserDao;
     private final MediaNetworkDataSource mMediaNetworkDataSource;
     private final AppExecutors mExecutors;
-    private boolean mInitialized = false;
-    private boolean mNeedAuth = false;
 
     private long timestamp;
 
     private static final long STALE_MS = TimeUnit.MINUTES.toMillis(2);
-
 
     private LocalDataRepository(LocalDataDao localDataDao, UserDao userDao,
                                 MediaNetworkDataSource mediaNetworkDataSource,
@@ -58,12 +55,12 @@ public class LocalDataRepository {
         LiveData<UserEntry> userNetworkData = mediaNetworkDataSource.getCurrentUser();
 
         userNetworkData.observeForever(userEntry ->
-            mExecutors.diskIO().execute(() -> {
-            deleteUserData();
-                Log.d(LOG_TAG, "Old weather deleted");
-                // Insert our new weather data into Sunshine's database
-                mUserDao.insertUser(userEntry);
-            })
+                mExecutors.diskIO().execute(() -> {
+                    deleteUserData();
+                    Log.d(LOG_TAG, "Old weather deleted");
+                    // Insert our new weather data into Sunshine's database
+                    mUserDao.insertUser(userEntry);
+                })
         );
     }
 
@@ -87,13 +84,8 @@ public class LocalDataRepository {
 
     public synchronized void initializeData() {
 
-        // Only perform initialization once per app lifetime. If initialization has already been
-        // performed, we have nothing to do in this method.
-        if (mInitialized) return;
-        mInitialized = true;
-
         mExecutors.diskIO().execute(() -> {
-            Log.d(LOG_TAG, "initializeData: " + mNeedAuth);
+            Log.d(LOG_TAG, "initializeData: ");
             if (isFetchNeeded()) {
                 startFetchMedia();
             }
@@ -126,8 +118,9 @@ public class LocalDataRepository {
         mUserDao.deleteTable();
     }
 
-    private void getUserFromNetwork() {
-        mMediaNetworkDataSource.fetchUser();
+    public void getUserFromNetwork(String code) {
+        Log.d("XPTO", "getUserFromNetwork: " + code);
+        mMediaNetworkDataSource.fetchUser(code);
     }
 
 }

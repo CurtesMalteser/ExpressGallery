@@ -112,13 +112,11 @@ public class MediaNetworkDataSource {
         return mDownloadedUser;
     }
 
-    public void fetchUser() {
-        mExecutors.networkIO().execute(()-> {
-            /*String redirectURI = "https://com.curtesmalteser.picgallery";
+    public void fetchUser(String code) {
+        Log.d("XPTO", "fetchUser: " + code);
+            String redirectURI = "https://com.curtesmalteser.picgallery";
 
-            Uri uri = getIntent().getData();
-            if (uri != null) {
-                MediaAPIInterface apiInterface = MediaAPI.getClient(getString(R.string.auth_url)).create(MediaAPIInterface.class);
+                MediaAPIInterface apiInterface = MediaAPI.getClient(mContext.getString(R.string.auth_url)).create(MediaAPIInterface.class);
                 Call<TokenModel> call;
 
                 call = apiInterface.getAuth(
@@ -126,7 +124,7 @@ public class MediaNetworkDataSource {
                         BuildConfig.CLIENT_SECRET,
                         "authorization_code",
                         redirectURI,
-                        uri.getQueryParameter("code")
+                        code
                 );
 
                 call.enqueue(new Callback<TokenModel>() {
@@ -134,9 +132,6 @@ public class MediaNetworkDataSource {
                     public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
                         if (response.body().getAccessToken() != null) {
                             savePreferences(response.body().getAccessToken());
-                            getUserProfilePic(response.body().getUser().getProfilePicture());
-                            // tvWelcome.setText();
-                            tvFullName.setText(response.body().getUser().getFullName());
                         }
                     }
 
@@ -144,8 +139,13 @@ public class MediaNetworkDataSource {
                     public void onFailure(Call<TokenModel> call, Throwable t) {
 
                     }
-                });*/
-        });
+                });
+    }
+
+    private void savePreferences(String token) {
+        SharedPreferences.Editor sharedPreferences = mContext.getSharedPreferences("pictures_preferences", MODE_PRIVATE).edit();
+        sharedPreferences.putString("token", token);
+        sharedPreferences.apply();
     }
 }
 
