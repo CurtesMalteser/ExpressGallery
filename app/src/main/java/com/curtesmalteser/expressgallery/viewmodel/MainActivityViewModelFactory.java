@@ -15,6 +15,7 @@ import com.curtesmalteser.expressgallery.data.LocalDataRepository;
 
 
 public class MainActivityViewModelFactory extends ViewModelProvider.NewInstanceFactory {
+
     private final LocalDataRepository mRepository;
 
     @SuppressLint("StaticFieldLeak")

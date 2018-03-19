@@ -1,5 +1,7 @@
 package com.curtesmalteser.expressgallery.activity;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -7,14 +9,22 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.curtesmalteser.expressgallery.AppExecutors;
 import com.curtesmalteser.expressgallery.BuildConfig;
 import com.curtesmalteser.expressgallery.R;
 import com.curtesmalteser.expressgallery.api.TokenModel;
+import com.curtesmalteser.expressgallery.data.AppDatabase;
+import com.curtesmalteser.expressgallery.data.InjectorUtils;
+import com.curtesmalteser.expressgallery.data.UserDao;
+import com.curtesmalteser.expressgallery.data.UserEntry;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPI;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPIInterface;
+import com.curtesmalteser.expressgallery.viewmodel.UserActivityViewModel;
+import com.curtesmalteser.expressgallery.viewmodel.UserViewModelFactory;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -25,6 +35,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class UserActivity extends AppCompatActivity {
+
+    private static final String TAG = UserActivity.class.getSimpleName();
 
     @BindView(R.id.user_toolbar)
     Toolbar userToolbar;
@@ -41,15 +53,32 @@ public class UserActivity extends AppCompatActivity {
     @BindView(R.id.btnLogOut)
     Button btnLogOut;
 
+    @BindView(R.id.imageGalley)
+    ImageButton imageGalley;
+
+    private UserActivityViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
+        UserViewModelFactory factory = InjectorUtils.provideUserViewModelFactory(this.getApplicationContext());
+
+        mViewModel = ViewModelProviders.of(this, factory).get(UserActivityViewModel.class);
+
         ButterKnife.bind(this);
         setSupportActionBar(userToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        mViewModel.getUser().observe(this, userEntry -> {
+            if (userEntry != null) {
+                Log.d(TAG, "onCreate: " + userEntry.fullName);
+                getUserProfilePic(userEntry.getProfilePicture());
+                // tvWelcome.setText();
+                tvFullName.setText(userEntry.getFullName());
+            }
+        });
 
         String redirectURI = "https://com.curtesmalteser.picgallery";
 
@@ -69,11 +98,19 @@ public class UserActivity extends AppCompatActivity {
             call.enqueue(new Callback<TokenModel>() {
                 @Override
                 public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
+                    AppDatabase appDatabase = AppDatabase.getInstance(getBaseContext());
+
                     if (response.body().getAccessToken() != null) {
                         savePreferences(response.body().getAccessToken());
-                        getUserProfilePic(response.body().getUser().getProfilePicture());
-                        // tvWelcome.setText();
-                        tvFullName.setText(response.body().getUser().getFullName());
+                        AppExecutors mExecutors = AppExecutors.getInstance();
+                        mExecutors.diskIO().execute(() -> {
+                            appDatabase.userDao().deleteTable();
+                            appDatabase.userDao().insertUser(new UserEntry(response.body().getUser().getId(),
+                                    response.body().getUser().getFullName(),
+                                    response.body().getUser().getUsername(),
+                                    response.body().getUser().getProfilePicture()));
+                        });
+
                     }
                 }
 
@@ -83,6 +120,11 @@ public class UserActivity extends AppCompatActivity {
                 }
             });
         }
+
+
+        imageGalley.setOnClickListener(v -> {
+            mViewModel.onClickPost();
+        });
     }
 
     private void getUserProfilePic(String url) {

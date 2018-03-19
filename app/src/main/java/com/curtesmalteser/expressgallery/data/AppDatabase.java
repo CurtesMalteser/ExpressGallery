@@ -11,10 +11,12 @@ import com.curtesmalteser.expressgallery.api.LocalEntry;
  * Created by António "Curtes Malteser" Bastião on 15/03/2018.
  */
 
-@Database(entities = {LocalEntry.class}, version = 1)
+@Database(entities = {LocalEntry.class, UserEntry.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract LocalDataDao localDataDao();
+
+    public abstract UserDao userDao();
 
     private static final String DATABASE_NAME = "media.db";
 

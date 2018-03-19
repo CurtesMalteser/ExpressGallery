@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/toolbar_background"
-        android:elevation="4dp"
-        app:titleTextColor="#000000">
+        android:theme="@style/ToolbarTextStyle"
+        android:elevation="4dp" >
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"

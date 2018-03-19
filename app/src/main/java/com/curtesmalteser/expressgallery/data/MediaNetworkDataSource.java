@@ -13,6 +13,7 @@ import com.curtesmalteser.expressgallery.BuildConfig;
 import com.curtesmalteser.expressgallery.R;
 import com.curtesmalteser.expressgallery.api.Datum;
 import com.curtesmalteser.expressgallery.api.LocalEntry;
+import com.curtesmalteser.expressgallery.api.TokenModel;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPI;
 import com.curtesmalteser.expressgallery.retrofit.MediaAPIInterface;
 
@@ -42,12 +43,14 @@ public class MediaNetworkDataSource {
     private final Context mContext;
 
     private final MutableLiveData<ArrayList<LocalEntry>> mDownloadedMedia;
+    private final MutableLiveData<UserEntry> mDownloadedUser;
     private final AppExecutors mExecutors;
 
     private MediaNetworkDataSource(Context context, AppExecutors executors) {
         mContext = context;
         mExecutors = executors;
         mDownloadedMedia = new MutableLiveData<>();
+        mDownloadedUser = new MutableLiveData<>();
     }
 
     public static MediaNetworkDataSource getInstance(Context context, AppExecutors executors) {
@@ -67,6 +70,7 @@ public class MediaNetworkDataSource {
 
     void fetchWeather() {
         Log.d(LOG_TAG, "Fetch weather started");
+
         mExecutors.networkIO().execute(() -> {
             SharedPreferences preferences = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
             String token = preferences.getString(TOKEN, "noValues");
@@ -101,6 +105,46 @@ public class MediaNetworkDataSource {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
             }
+        });
+    }
+
+    public LiveData<UserEntry> getCurrentUser() {
+        return mDownloadedUser;
+    }
+
+    public void fetchUser() {
+        mExecutors.networkIO().execute(()-> {
+            /*String redirectURI = "https://com.curtesmalteser.picgallery";
+
+            Uri uri = getIntent().getData();
+            if (uri != null) {
+                MediaAPIInterface apiInterface = MediaAPI.getClient(getString(R.string.auth_url)).create(MediaAPIInterface.class);
+                Call<TokenModel> call;
+
+                call = apiInterface.getAuth(
+                        BuildConfig.CLIENT_ID,
+                        BuildConfig.CLIENT_SECRET,
+                        "authorization_code",
+                        redirectURI,
+                        uri.getQueryParameter("code")
+                );
+
+                call.enqueue(new Callback<TokenModel>() {
+                    @Override
+                    public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
+                        if (response.body().getAccessToken() != null) {
+                            savePreferences(response.body().getAccessToken());
+                            getUserProfilePic(response.body().getUser().getProfilePicture());
+                            // tvWelcome.setText();
+                            tvFullName.setText(response.body().getUser().getFullName());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<TokenModel> call, Throwable t) {
+
+                    }
+                });*/
         });
     }
 }
