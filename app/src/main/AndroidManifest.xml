@@ -21,11 +21,9 @@
         <activity android:name=".activity.MainActivity">
 
         </activity>
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
         <activity android:name=".activity.UserActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

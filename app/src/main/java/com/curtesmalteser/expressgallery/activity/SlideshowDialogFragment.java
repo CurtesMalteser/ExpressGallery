@@ -119,14 +119,15 @@ public class SlideshowDialogFragment extends DialogFragment {
         public MyViewPagerAdapter() {
         }
 
+        @BindView(R.id.image_preview)
+        ImageView imageViewPreview;
+
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
 
             layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = layoutInflater.inflate(R.layout.image_fullscreen_preview, container, false);
-
-            final ImageView imageViewPreview = (ImageView) view.findViewById(R.id.image_preview);
-
+            ButterKnife.bind(this, view);
             final LocalEntry image = images.get(position);
 
             Picasso.with(getContext())
@@ -170,7 +171,7 @@ public class SlideshowDialogFragment extends DialogFragment {
 
         @Override
         public boolean isViewFromObject(View view, Object obj) {
-            return view == ((View) obj);
+            return view ==  obj;
         }
 
 

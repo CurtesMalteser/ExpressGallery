@@ -76,22 +76,24 @@ public class MediaNetworkDataSource {
             if (preferences != null && !token.equals("noValues")) {
                 MediaAPIInterface apiInterface = MediaAPI.getClient(mContext.getString(R.string.base_url)).create(MediaAPIInterface.class);
                 Call<Datum> call;
-
-
                 call = apiInterface.getMedia(token);
                 call.enqueue(new Callback<Datum>() {
                     @Override
                     public void onResponse(Call<Datum> call, Response<Datum> response) {
-                        response.body().getData().size();
+                        if (response.code() == 200) {
+                            response.body().getData().size();
 
-                        ArrayList<LocalEntry> entry = new ArrayList<>();
+                            ArrayList<LocalEntry> entry = new ArrayList<>();
 
-                        for (Datum datum : response.body().getData()) {
-                            entry.add(new LocalEntry(datum.getImages().getStandardResolution().getUrl(),
-                                    datum.getLikes().getCount(),
-                                    datum.getComments().getCount()));
+                            for (Datum datum : response.body().getData()) {
+                                entry.add(new LocalEntry(datum.getImages().getStandardResolution().getUrl(),
+                                        datum.getLikes().getCount(),
+                                        datum.getComments().getCount()));
+                            }
+                            mDownloadedMedia.postValue(entry);
+                        } else if (response.code() == 400) {
+                            requestAuthentication();
                         }
-                        mDownloadedMedia.postValue(entry);
                     }
 
                     @Override
@@ -100,12 +102,17 @@ public class MediaNetworkDataSource {
                     }
                 });
             } else {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://api.instagram.com/oauth/authorize/" + "?client_id=" + BuildConfig.CLIENT_ID + "&redirect_uri=" + mContext.getString(R.string.redirect_uri) + "&response_type=code"));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
+                requestAuthentication();
             }
         });
     }
+
+    private void requestAuthentication() {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://api.instagram.com/oauth/authorize/" + "?client_id=" + BuildConfig.CLIENT_ID + "&redirect_uri=" + mContext.getString(R.string.redirect_uri) + "&response_type=code"));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
+    }
+
 
     public LiveData<UserEntry> getCurrentUser() {
         return mDownloadedUser;
@@ -130,13 +137,15 @@ public class MediaNetworkDataSource {
             call.enqueue(new Callback<TokenModel>() {
                 @Override
                 public void onResponse(Call<TokenModel> call, Response<TokenModel> response) {
-                    if (response.body().getAccessToken() != null) {
-                        savePreferences(response.body().getAccessToken());
-                        mDownloadedUser.postValue(new UserEntry(response.body().getUser().getId(),
-                                response.body().getUser().getFullName(),
-                                response.body().getUser().getUsername(),
-                                response.body().getUser().getProfilePicture()
-                        ));
+                    if (response.code() == 200) {
+                        if (response.body().getAccessToken() != null) {
+                            savePreferences(response.body().getAccessToken());
+                            mDownloadedUser.postValue(new UserEntry(response.body().getUser().getId(),
+                                    response.body().getUser().getFullName(),
+                                    response.body().getUser().getUsername(),
+                                    response.body().getUser().getProfilePicture()
+                            ));
+                        }
                     }
                 }
 
@@ -152,6 +161,11 @@ public class MediaNetworkDataSource {
         SharedPreferences.Editor sharedPreferences = mContext.getSharedPreferences("pictures_preferences", MODE_PRIVATE).edit();
         sharedPreferences.putString("token", token);
         sharedPreferences.apply();
+    }
+
+    public void deletePreferences() {
+        SharedPreferences.Editor sharedPreferences = mContext.getSharedPreferences("pictures_preferences", MODE_PRIVATE).edit();
+        sharedPreferences.clear().apply();
     }
 }
 

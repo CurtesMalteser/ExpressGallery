@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,6 +29,9 @@ public class UserActivity extends AppCompatActivity {
     @BindView(R.id.user_toolbar)
     Toolbar userToolbar;
 
+    @BindView(R.id.welcomeImage)
+    ImageView welcomeImage;
+
     @BindView(R.id.profileImage)
     ImageView profileImage;
 
@@ -45,6 +49,8 @@ public class UserActivity extends AppCompatActivity {
 
     private UserActivityViewModel mViewModel;
 
+    private boolean loggedNeeded;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,23 +66,34 @@ public class UserActivity extends AppCompatActivity {
 
         Uri uri = getIntent().getData();
         if (uri != null) {
-            mViewModel.getUser(uri.getQueryParameter("code"));
+            mViewModel.getUserData(uri.getQueryParameter("code"));
         }
 
         mViewModel.getUser().observe(this, userEntry -> {
+
             if (userEntry != null) {
                 getUserProfilePic(userEntry.getProfilePicture());
-                // tvWelcome.setText();
+                Log.d("XPTO", "onCreate: " + userEntry.getProfilePicture());
                 tvFullName.setText(userEntry.getFullName());
+                welcomeImage.setVisibility(View.INVISIBLE);
+                loggedNeeded = false;
+            } else {
+                loggedNeeded = true;
+                tvWelcome.setText("");
+                tvFullName.setText("");
+                welcomeImage.setVisibility(View.VISIBLE);
+                profileImage.setVisibility(View.INVISIBLE);
+                btnLogOut.setText("Login");
             }
         });
 
         imageGalley.setOnClickListener(v -> mViewModel.onClickPost());
 
         btnLogOut.setOnClickListener(v -> {
-
-            // todo -> complete the logout
-            Log.d(TAG, "onCreate: clicked");
+            if (loggedNeeded)
+                mViewModel.onClickPost();
+            else
+                mViewModel.deleteUser();
         });
     }
 
@@ -94,7 +111,7 @@ public class UserActivity extends AppCompatActivity {
                     public void onError() {
                         Picasso.with(getBaseContext())
                                 .load(url)
-                                .error(R.drawable.ic_launcher_background)
+                                .error(R.drawable.ic_person_black_24dp)
                                 .into(profileImage, new com.squareup.picasso.Callback() {
                                     @Override
                                     public void onSuccess() {

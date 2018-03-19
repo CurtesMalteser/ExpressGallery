@@ -26,5 +26,5 @@ public interface LocalDataDao {
     void bulkInsert(ArrayList<LocalEntry> locals);
 
     @Query("DELETE FROM local_data")
-    void deleteTable();
+    int deleteTable();
 }

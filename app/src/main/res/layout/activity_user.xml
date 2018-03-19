@@ -20,8 +20,8 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/toolbar_button_w_h"
+                android:layout_height="@dimen/toolbar_button_w_h"
                 app:layout_constraintBottom_toTopOf="@+id/textView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView"
@@ -34,13 +34,11 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/alex_brush"
-                android:textColor="#000000"
                 android:paddingEnd="8dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:paddingStart="8dp"
                 android:text="@string/app_name"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,11 +46,11 @@
 
             <ImageButton
                 android:id="@+id/imageGalley"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/toolbar_button_w_h"
+                android:layout_height="@dimen/toolbar_button_w_h"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
-                android:background="#00000000"
+                android:background="@color/colorPrimaryDark"
                 app:layout_constraintBottom_toTopOf="@+id/textView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView"
@@ -71,6 +69,7 @@
         android:layout_marginTop="8dp"
         app:civ_border_color="#FF000000"
         app:civ_border_width="0dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/tvWelcome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -79,16 +78,26 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:srcCompat="@drawable/ic_person_black_24dp" />
 
+    <ImageView
+        android:id="@+id/welcomeImage"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/splash_camera"
+        app:layout_constraintBottom_toTopOf="@+id/tvWelcome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/tvWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Welcome"
         app:layout_constraintBottom_toTopOf="@+id/tvFullName"
         app:layout_constraintEnd_toStartOf="@+id/profileImage"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/profileImage"
-        app:layout_constraintTop_toBottomOf="@+id/profileImage"
-        tools:text="Welcome" />
+        app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
     <TextView
         android:id="@+id/tvFullName"
@@ -106,6 +115,7 @@
         android:id="@+id/btnLogOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/toolbar_background"
         android:text="@string/logout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvFullName"

@@ -97,8 +97,8 @@ public class LocalDataRepository {
         return mLocalDataDao.getAll();
     }
 
-    private void deleteOldData() {
-        mLocalDataDao.deleteTable();
+    private int deleteOldData() {
+        return mLocalDataDao.deleteTable();
     }
 
     private boolean isFetchNeeded() {
@@ -114,12 +114,24 @@ public class LocalDataRepository {
         return mUserDao.getAll();
     }
 
-    private void deleteUserData() {
-        mUserDao.deleteTable();
+    private int deleteUserData() {
+       return mUserDao.deleteTable();
     }
 
     public void getUserFromNetwork(String code) {
         mMediaNetworkDataSource.fetchUser(code);
+    }
+
+    public void deleteUser() {
+
+        mExecutors.diskIO().execute(() -> {
+            if( deleteUserData() > 0 ) Log.d("XPTO", "deleteUser:");
+        });
+        mExecutors.diskIO().execute(() -> {
+            if (deleteOldData() > 0 ) Log.d("XPTO", "deleteUser: ");
+        });
+        mMediaNetworkDataSource.deletePreferences();
+
     }
 
 }

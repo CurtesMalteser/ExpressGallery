@@ -11,9 +11,7 @@ import java.util.concurrent.Executors;
  * Created by António "Curtes Malteser" Bastião on 17/03/2018.
  */
 
-
 public class AppExecutors {
-    // For Singleton instantiation
     private static final Object LOCK = new Object();
     private static AppExecutors sInstance;
     private final Executor diskIO;
