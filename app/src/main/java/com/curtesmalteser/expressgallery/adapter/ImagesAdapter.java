@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.curtesmalteser.expressgallery.R;
-import com.curtesmalteser.expressgallery.api.LocalEntry;
+import com.curtesmalteser.expressgallery.data.LocalEntry;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;

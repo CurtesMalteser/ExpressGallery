@@ -9,18 +9,17 @@ import android.support.annotation.NonNull;
  * Created by António "Curtes Malteser" Bastião on 18/03/2018.
  */
 
-
 @Entity(tableName = "user")
 public class UserEntry {
 
     @PrimaryKey
     @NonNull
     private String id;
-    public String fullName;
-    public String username;
+    private String fullName;
+    private String username;
     private String profilePicture;
 
-    public UserEntry(String id, String fullName, String username, String profilePicture) {
+    UserEntry(String id, String fullName, String username, String profilePicture) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;

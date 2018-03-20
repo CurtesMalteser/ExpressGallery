@@ -6,4 +6,12 @@
     <string name="comments">Comments:</string>
     <string name="redirect_uri" translatable="false">https://com.curtesmalteser.picgallery</string>
     <string name="logout">Logout</string>
+    <string name="number_of_pictures">%1$d of %2$d</string>
+    <string name="app_logo">App logo</string>
+    <string name="string_button_user_activity">Button to navigate to user activity</string>
+    <string name="string_button_gallery_activity">Button to navigate to gallery activity</string>
+    <string name="welcome_logo">Welcome logo</string>
+    <string name="selected_picture">Selected picture from gallery</string>
+    <string name="welcome">Welcome</string>
+    <string name="login">Login</string>
 </resources>

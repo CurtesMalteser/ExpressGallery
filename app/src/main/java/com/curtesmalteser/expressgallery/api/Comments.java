@@ -14,8 +14,4 @@ public class Comments {
         return count;
     }
 
-    public void setCount(Integer count) {
-        this.count = count;
-    }
-
 }

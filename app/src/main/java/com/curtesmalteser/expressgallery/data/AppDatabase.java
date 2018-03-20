@@ -5,8 +5,6 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import com.curtesmalteser.expressgallery.api.LocalEntry;
-
 /**
  * Created by António "Curtes Malteser" Bastião on 15/03/2018.
  */
@@ -20,7 +18,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "media.db";
 
-    // For Singleton instantiation
     private static final Object LOCK = new Object();
     private static volatile AppDatabase sInstance;
 

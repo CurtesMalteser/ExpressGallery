@@ -11,7 +11,6 @@ import com.curtesmalteser.expressgallery.data.LocalDataRepository;
  * Created by António "Curtes Malteser" Bastião on 19/03/2018.
  */
 
-
 public class UserViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
     private final LocalDataRepository mRepository;

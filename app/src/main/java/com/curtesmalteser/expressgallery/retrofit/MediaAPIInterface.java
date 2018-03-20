@@ -1,10 +1,8 @@
 package com.curtesmalteser.expressgallery.retrofit;
 
 import com.curtesmalteser.expressgallery.api.Datum;
-import com.curtesmalteser.expressgallery.api.ModelAPI;
 import com.curtesmalteser.expressgallery.api.TokenModel;
 
-import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -15,7 +13,6 @@ import retrofit2.http.Query;
 /**
  * Created by António "Curtes Malteser" Bastião on 13/03/2018.
  */
-
 
 public interface MediaAPIInterface {
     @GET("users/self/media/recent/")

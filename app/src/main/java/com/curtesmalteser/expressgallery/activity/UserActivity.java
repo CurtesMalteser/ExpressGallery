@@ -73,7 +73,6 @@ public class UserActivity extends AppCompatActivity {
 
             if (userEntry != null) {
                 getUserProfilePic(userEntry.getProfilePicture());
-                Log.d("XPTO", "onCreate: " + userEntry.getProfilePicture());
                 tvFullName.setText(userEntry.getFullName());
                 welcomeImage.setVisibility(View.INVISIBLE);
                 loggedNeeded = false;
@@ -83,7 +82,7 @@ public class UserActivity extends AppCompatActivity {
                 tvFullName.setText("");
                 welcomeImage.setVisibility(View.VISIBLE);
                 profileImage.setVisibility(View.INVISIBLE);
-                btnLogOut.setText("Login");
+                btnLogOut.setText(getResources().getString(R.string.login));
             }
         });
 

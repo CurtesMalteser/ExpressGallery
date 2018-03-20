@@ -14,6 +14,7 @@
 
         <ImageView
             android:id="@+id/picture"
+            android:contentDescription="@string/selected_picture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
@@ -41,6 +42,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/likes"
                 android:paddingRight="8dp"
+                android:paddingEnd="8dp"
                 app:srcCompat="@drawable/ic_heart_white"/>
 
             <TextView
@@ -49,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#ffffff"
                 android:paddingRight="8dp"
+                android:paddingEnd="8dp"
                 tools:text="10" />
 
             <ImageView
@@ -64,7 +67,7 @@
                 android:id="@+id/tvComments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5"
+                tools:text="5"
                 android:textColor="#ffffff" />
         </LinearLayout>
 

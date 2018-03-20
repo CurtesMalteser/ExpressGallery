@@ -6,7 +6,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/splash_camera" />
+            android:src="@mipmap/splash_camera" />
     </item>
 
 </layer-list>

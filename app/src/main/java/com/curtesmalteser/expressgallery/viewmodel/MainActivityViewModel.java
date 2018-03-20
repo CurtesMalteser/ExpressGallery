@@ -1,13 +1,13 @@
 package com.curtesmalteser.expressgallery.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.curtesmalteser.expressgallery.activity.UserActivity;
-import com.curtesmalteser.expressgallery.api.LocalEntry;
+import com.curtesmalteser.expressgallery.data.LocalEntry;
 import com.curtesmalteser.expressgallery.data.LocalDataRepository;
 
 import java.util.List;
@@ -20,11 +20,12 @@ public class MainActivityViewModel extends ViewModel {
 
     private final LiveData<List<LocalEntry>> mData;
 
+    @SuppressLint("StaticFieldLeak")
     private final Context mContext;
 
     private final LocalDataRepository mRepository;
 
-    public MainActivityViewModel(Context context, LocalDataRepository repository) {
+    MainActivityViewModel(Context context, LocalDataRepository repository) {
         mContext = context;
         mRepository = repository;
         mData = mRepository.getAll();

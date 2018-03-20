@@ -13,6 +13,12 @@ android {
 
         buildConfigField("String", "CLIENT_ID", CLIENT_ID)
         buildConfigField("String", "CLIENT_SECRET", CLIENT_SECRET)
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -30,7 +36,13 @@ ext {
     retrofitVersion = '2.3.0'
     daggerVersion = '2.15'
     architectureComponentsVersion = '1.1.0'
-    firebase_jobdispatcher_version = '0.8.5'
+    roomVersion = '1.0.0'
+    gsonVersion = '2.8.2'
+    okhttpVersion = '3.10.0'
+    picassoVersion = '2.5.2'
+    butterknifeVersion = '8.8.1'
+    circleImageView = '2.2.0'
+    stethoVersion = '1.5.0'
 }
 
 dependencies {
@@ -43,27 +55,19 @@ dependencies {
     implementation "android.arch.lifecycle:common-java8:$architectureComponentsVersion"
     implementation "android.arch.lifecycle:runtime:$architectureComponentsVersion"
     implementation "android.arch.lifecycle:extensions:$architectureComponentsVersion"
+    implementation "android.arch.persistence.room:runtime:$roomVersion"
+    annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
+    implementation "com.jakewharton:butterknife:$butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    implementation "de.hdodenhof:circleimageview:$circleImageView"
+    implementation "com.facebook.stetho:stetho:$stethoVersion"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    compile 'com.google.code.gson:gson:2.8.2'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
-    // todo -> delete this ??
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    implementation 'android.arch.persistence.room:runtime:1.0.0'
-    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
-    implementation 'android.arch.persistence.room:rxjava2:1.0.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
-
-    implementation "com.firebase:firebase-jobdispatcher:$firebase_jobdispatcher_version"
-
-    implementation 'com.facebook.stetho:stetho:1.5.0'
-
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }

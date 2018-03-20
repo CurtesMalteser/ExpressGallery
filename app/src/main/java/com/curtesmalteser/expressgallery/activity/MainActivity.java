@@ -1,9 +1,6 @@
 package com.curtesmalteser.expressgallery.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.persistence.room.Room;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
@@ -12,20 +9,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.curtesmalteser.expressgallery.BuildConfig;
 import com.curtesmalteser.expressgallery.R;
 import com.curtesmalteser.expressgallery.adapter.ImagesAdapter;
-import com.curtesmalteser.expressgallery.api.LocalEntry;
-import com.curtesmalteser.expressgallery.api.TokenModel;
-import com.curtesmalteser.expressgallery.data.AppDatabase;
+import com.curtesmalteser.expressgallery.data.LocalEntry;
 import com.curtesmalteser.expressgallery.data.InjectorUtils;
-import com.curtesmalteser.expressgallery.retrofit.MediaAPI;
-import com.curtesmalteser.expressgallery.retrofit.MediaAPIInterface;
 import com.curtesmalteser.expressgallery.viewmodel.MainActivityViewModelFactory;
 import com.curtesmalteser.expressgallery.viewmodel.MainActivityViewModel;
 import com.facebook.stetho.Stetho;
@@ -36,9 +28,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements ImagesAdapter.ListItemClickListener {
@@ -55,7 +44,6 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.imageUser)
     ImageButton imageUser;
 
-    private ImagesAdapter listAdapter;
     private ArrayList<LocalEntry> resultList = new ArrayList<>();
 
     private MainActivityViewModel mViewModel;
@@ -76,10 +64,10 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mViewModel.getData().observe(this, localModel -> {
-            if(localModel != null )bindView(localModel);
+            if (localModel != null) bindView(localModel);
 
-             if (savedInstanceState != null && mRecyclerView != null)
-                 mRecyclerView.getLayoutManager().onRestoreInstanceState(stateRecyclerView);
+            if (savedInstanceState != null && mRecyclerView != null)
+                mRecyclerView.getLayoutManager().onRestoreInstanceState(stateRecyclerView);
         });
 
         imageUser.setOnClickListener(v -> mViewModel.onClickPost());
@@ -110,18 +98,28 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void bindView(List<LocalEntry> localModel) {
+        ImagesAdapter listAdapter;
         resultList = (ArrayList<LocalEntry>) localModel;
 
         listAdapter = new ImagesAdapter(this, resultList, this);
         mRecyclerView.setAdapter(listAdapter);
-
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(numberOfColumns(), LinearLayoutManager.VERTICAL));
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         stateRecyclerView = mRecyclerView.getLayoutManager().onSaveInstanceState();
+    }
+
+    private int numberOfColumns() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int widthDivider = 400;
+        int width = displayMetrics.widthPixels;
+        int nColumns = width / widthDivider;
+        if (nColumns < 2) return 2;
+        return nColumns;
     }
 }

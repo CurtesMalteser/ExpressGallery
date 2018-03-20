@@ -10,7 +10,6 @@ import com.curtesmalteser.expressgallery.viewmodel.UserViewModelFactory;
  * Created by António "Curtes Malteser" Bastião on 17/03/2018.
  */
 
-
 public class InjectorUtils {
     public static LocalDataRepository provideRepository(Context context) {
         AppDatabase database = AppDatabase.getInstance(context.getApplicationContext());

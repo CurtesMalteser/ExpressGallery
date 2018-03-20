@@ -1,11 +1,9 @@
 package com.curtesmalteser.expressgallery.data;
 
 import android.arch.lifecycle.LiveData;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.curtesmalteser.expressgallery.AppExecutors;
-import com.curtesmalteser.expressgallery.api.LocalEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +37,11 @@ public class LocalDataRepository {
         this.mExecutors = executors;
         this.timestamp = System.currentTimeMillis();
 
-        // As long as the repository exists, observe the network LiveData.
-        // If that LiveData changes, update the database.
-        LiveData<ArrayList<LocalEntry>> networkData = mediaNetworkDataSource.getCurrentWeatherForecasts();
+        LiveData<ArrayList<LocalEntry>> networkData = mediaNetworkDataSource.getRecentMedia();
         networkData.observeForever((localEntries) ->
                 mExecutors.diskIO().execute(() -> {
-                    // Deletes old historical data
                     deleteOldData();
-                    Log.d(LOG_TAG, "Old weather deleted");
-                    // Insert our new weather data into Sunshine's database
                     mLocalDataDao.bulkInsert(localEntries);
-                    Log.d(LOG_TAG, "New values inserted");
                 }));
 
         LiveData<UserEntry> userNetworkData = mediaNetworkDataSource.getCurrentUser();
@@ -57,35 +49,30 @@ public class LocalDataRepository {
         userNetworkData.observeForever(userEntry ->
                 mExecutors.diskIO().execute(() -> {
                     deleteUserData();
-                    Log.d(LOG_TAG, "Old weather deleted");
-                    // Insert our new weather data into Sunshine's database
                     mUserDao.insertUser(userEntry);
                 })
         );
     }
 
-    public synchronized static LocalDataRepository getInstance(
+    synchronized static LocalDataRepository getInstance(
             LocalDataDao localDataDao,
             UserDao userDao,
             MediaNetworkDataSource mediaNetworkDataSource,
             AppExecutors executors) {
-        Log.d(LOG_TAG, "Getting the repository");
         if (sInstance == null) {
             synchronized (LOCK) {
                 sInstance = new LocalDataRepository(localDataDao,
                         userDao,
                         mediaNetworkDataSource,
                         executors);
-                Log.d(LOG_TAG, "Made new repository");
             }
         }
         return sInstance;
     }
 
-    public synchronized void initializeData() {
+    private synchronized void initializeData() {
 
         mExecutors.diskIO().execute(() -> {
-            Log.d(LOG_TAG, "initializeData: ");
             if (isFetchNeeded()) {
                 startFetchMedia();
             }
@@ -106,7 +93,7 @@ public class LocalDataRepository {
     }
 
     private void startFetchMedia() {
-        mMediaNetworkDataSource.fetchWeather();
+        mMediaNetworkDataSource.fetchMedia();
     }
 
     public LiveData<UserEntry> getUser() {
@@ -115,7 +102,7 @@ public class LocalDataRepository {
     }
 
     private int deleteUserData() {
-       return mUserDao.deleteTable();
+        return mUserDao.deleteTable();
     }
 
     public void getUserFromNetwork(String code) {
@@ -124,12 +111,8 @@ public class LocalDataRepository {
 
     public void deleteUser() {
 
-        mExecutors.diskIO().execute(() -> {
-            if( deleteUserData() > 0 ) Log.d("XPTO", "deleteUser:");
-        });
-        mExecutors.diskIO().execute(() -> {
-            if (deleteOldData() > 0 ) Log.d("XPTO", "deleteUser: ");
-        });
+        mExecutors.diskIO().execute(() -> deleteUserData());
+        mExecutors.diskIO().execute(() -> deleteOldData());
         mMediaNetworkDataSource.deletePreferences();
 
     }

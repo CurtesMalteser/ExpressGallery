@@ -20,6 +20,7 @@
 
             <ImageView
                 android:id="@+id/imageView"
+                android:contentDescription="@string/app_logo"
                 android:layout_width="@dimen/toolbar_button_w_h"
                 android:layout_height="@dimen/toolbar_button_w_h"
                 app:layout_constraintBottom_toTopOf="@+id/textView"
@@ -46,6 +47,7 @@
 
             <ImageButton
                 android:id="@+id/imageGalley"
+                android:contentDescription="@string/string_button_gallery_activity"
                 android:layout_width="@dimen/toolbar_button_w_h"
                 android:layout_height="@dimen/toolbar_button_w_h"
                 android:layout_marginEnd="16dp"
@@ -57,8 +59,6 @@
                 app:srcCompat="@drawable/ic_photo_library_black_24dp" />
 
         </android.support.constraint.ConstraintLayout>
-
-
 
     </android.support.v7.widget.Toolbar>
 
@@ -80,10 +80,11 @@
 
     <ImageView
         android:id="@+id/welcomeImage"
+        android:contentDescription="@string/welcome_logo"
         android:layout_width="192dp"
         android:layout_height="192dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/splash_camera"
+        android:background="@mipmap/splash_camera"
         app:layout_constraintBottom_toTopOf="@+id/tvWelcome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -92,7 +93,7 @@
         android:id="@+id/tvWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome"
+        android:text="@string/welcome"
         app:layout_constraintBottom_toTopOf="@+id/tvFullName"
         app:layout_constraintEnd_toStartOf="@+id/profileImage"
         app:layout_constraintHorizontal_bias="0.5"
@@ -115,6 +116,7 @@
         android:id="@+id/btnLogOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:background="@drawable/toolbar_background"
         android:text="@string/logout"
         app:layout_constraintBottom_toBottomOf="parent"
