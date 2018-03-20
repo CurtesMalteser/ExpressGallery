@@ -24,8 +24,6 @@ import butterknife.ButterKnife;
 
 public class UserActivity extends AppCompatActivity {
 
-    private static final String TAG = UserActivity.class.getSimpleName();
-
     @BindView(R.id.user_toolbar)
     Toolbar userToolbar;
 
@@ -63,11 +61,6 @@ public class UserActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(userToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        Uri uri = getIntent().getData();
-        if (uri != null) {
-            mViewModel.getUserData(uri.getQueryParameter("code"));
-        }
 
         mViewModel.getUser().observe(this, userEntry -> {
 

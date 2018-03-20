@@ -1,6 +1,7 @@
 package com.curtesmalteser.expressgallery.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
@@ -63,15 +64,25 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        Uri uri = getIntent().getData();
+        if (uri != null) {
+            mViewModel.getUserData(uri.getQueryParameter("code"));
+            initializeObserveData(savedInstanceState);
+        } else {
+            initializeObserveData(savedInstanceState);
+        }
+
+        imageUser.setOnClickListener(v -> mViewModel.onClickPost());
+
+    }
+
+    private void initializeObserveData(Bundle savedInstanceState) {
         mViewModel.getData().observe(this, localModel -> {
             if (localModel != null) bindView(localModel);
 
             if (savedInstanceState != null && mRecyclerView != null)
                 mRecyclerView.getLayoutManager().onRestoreInstanceState(stateRecyclerView);
         });
-
-        imageUser.setOnClickListener(v -> mViewModel.onClickPost());
-
     }
 
     @Override
@@ -110,6 +121,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (stateRecyclerView != null)
         stateRecyclerView = mRecyclerView.getLayoutManager().onSaveInstanceState();
     }
 

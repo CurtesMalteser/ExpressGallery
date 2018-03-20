@@ -31,8 +31,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 class MediaNetworkDataSource {
 
-    private static final String LOG_TAG = MediaNetworkDataSource.class.getSimpleName();
-
     static final String SHARED_PREFERENCES_NAME = "pictures_preferences";
     static final String TOKEN = "token";
 
@@ -115,7 +113,6 @@ class MediaNetworkDataSource {
     }
 
     void fetchUser(String code) {
-        Log.d("XPTO", "fetchUser: " + code);
         String redirectURI = "https://com.curtesmalteser.picgallery";
 
         MediaAPIInterface apiInterface = MediaAPI.getClient(mContext.getString(R.string.auth_url)).create(MediaAPIInterface.class);

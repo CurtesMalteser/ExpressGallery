@@ -39,10 +39,6 @@ public class UserActivityViewModel extends ViewModel {
         mContext.startActivity(intent);
     }
 
-    public void getUserData(String code) {
-        mRepository.getUserFromNetwork(code);
-    }
-
     public void deleteUser() {
         mRepository.deleteUser();
     }

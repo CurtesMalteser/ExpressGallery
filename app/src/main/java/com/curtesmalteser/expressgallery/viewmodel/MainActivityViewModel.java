@@ -40,4 +40,8 @@ public class MainActivityViewModel extends ViewModel {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
+
+    public void getUserData(String code) {
+        mRepository.getUserFromNetwork(code);
+    }
 }

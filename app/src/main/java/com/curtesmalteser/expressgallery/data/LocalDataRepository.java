@@ -26,7 +26,7 @@ public class LocalDataRepository {
 
     private long timestamp;
 
-    private static final long STALE_MS = TimeUnit.MINUTES.toMillis(2);
+    private static final long STALE_MS = TimeUnit.MINUTES.toMillis(1);
 
     private LocalDataRepository(LocalDataDao localDataDao, UserDao userDao,
                                 MediaNetworkDataSource mediaNetworkDataSource,
@@ -111,8 +111,8 @@ public class LocalDataRepository {
 
     public void deleteUser() {
 
-        mExecutors.diskIO().execute(() -> deleteUserData());
-        mExecutors.diskIO().execute(() -> deleteOldData());
+        mExecutors.diskIO().execute(this::deleteUserData);
+        mExecutors.diskIO().execute(this::deleteOldData);
         mMediaNetworkDataSource.deletePreferences();
 
     }
