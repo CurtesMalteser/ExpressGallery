@@ -12,7 +12,7 @@ import java.util.List;
  * Created by António "Curtes Malteser" Bastião on 18/03/2018.
  */
 
-@Dao // Required annotation for Dao to be recognized by Room
+@Dao
 public interface UserDao {
 
     @Query("SELECT * FROM user")

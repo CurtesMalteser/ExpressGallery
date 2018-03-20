@@ -14,19 +14,13 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class LocalDataRepository {
-    private static final String LOG_TAG = LocalDataRepository.class.getSimpleName();
 
-    // For Singleton instantiation
     private static final Object LOCK = new Object();
     private static LocalDataRepository sInstance;
     private final LocalDataDao mLocalDataDao;
     private final UserDao mUserDao;
     private final MediaNetworkDataSource mMediaNetworkDataSource;
     private final AppExecutors mExecutors;
-
-    private long timestamp;
-
-    private static final long STALE_MS = TimeUnit.MINUTES.toMillis(1);
 
     private LocalDataRepository(LocalDataDao localDataDao, UserDao userDao,
                                 MediaNetworkDataSource mediaNetworkDataSource,
@@ -35,7 +29,6 @@ public class LocalDataRepository {
         this.mUserDao = userDao;
         this.mMediaNetworkDataSource = mediaNetworkDataSource;
         this.mExecutors = executors;
-        this.timestamp = System.currentTimeMillis();
 
         LiveData<ArrayList<LocalEntry>> networkData = mediaNetworkDataSource.getRecentMedia();
         networkData.observeForever((localEntries) ->
@@ -72,11 +65,7 @@ public class LocalDataRepository {
 
     private synchronized void initializeData() {
 
-        mExecutors.diskIO().execute(() -> {
-            if (isFetchNeeded()) {
-                startFetchMedia();
-            }
-        });
+        mExecutors.diskIO().execute(this::startFetchMedia);
     }
 
     public LiveData<List<LocalEntry>> getAll() {
@@ -86,10 +75,6 @@ public class LocalDataRepository {
 
     private int deleteOldData() {
         return mLocalDataDao.deleteTable();
-    }
-
-    private boolean isFetchNeeded() {
-        return System.currentTimeMillis() - timestamp < STALE_MS;
     }
 
     private void startFetchMedia() {

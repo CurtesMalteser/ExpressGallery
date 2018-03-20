@@ -76,7 +76,6 @@ public class SlideshowDialogFragment extends DialogFragment {
         displayMetaInfo(selectedPosition);
     }
 
-    //  page change listener
     ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
 
         @Override
